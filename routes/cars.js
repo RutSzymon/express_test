@@ -1,16 +1,25 @@
 const express = require('express')
 const router = express.Router()
 
+router.use(logger)
+
 router.get('/', (req, res) => {
-  res.send('Car List')
+  const { term } = req.query
+  res.render('cars/index', { cars: filtered_cars(term) })
 })
 
 router.get('/new', (req, res) => {
-  res.send('Car New Form')
+  res.render('cars/new')
 })
 
 router.post('/', (req, res) => {
-  res.send('Create Car')
+  const { make, model } = req.body
+  if (make && model) {
+    cars.push({ make, model })
+    res.redirect(`/cars/${cars.length - 1}`)
+  } else {
+    res.status(422).render('cars/new', { make, model })
+  }
 })
 
 router
@@ -34,8 +43,17 @@ const cars = [
 ]
 
 router.param('id', (req, res, next, id) => {
-  req.car = cars[id]
+  req.car = cars[id - 1]
   next()
 })
+
+function logger(req, res, next) {
+  console.log(req.originalUrl)
+  next()
+}
+
+function filtered_cars(term) {
+  return term ? cars.filter(({ make, model }) => make.includes(term) || model.includes(term)) : cars
+}
 
 module.exports = router
