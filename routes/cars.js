@@ -16,7 +16,7 @@ router.post('/', (req, res) => {
   const { make, model } = req.body
   if (make && model) {
     cars.push({ make, model })
-    res.redirect(`/cars/${cars.length - 1}`)
+    res.redirect(`/cars/${cars.length}`)
   } else {
     res.status(422).render('cars/new', { make, model })
   }
